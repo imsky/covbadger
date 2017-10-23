@@ -34,15 +34,34 @@ var _badgeTemplate string = `<svg xmlns="http://www.w3.org/2000/svg" width="96" 
     </g>
 </svg>`
 
-func RenderBadge(files []string) string {
+func RenderBadge(reports []CoverageReport) string {
 	var buffer bytes.Buffer
 	var coverageSum float64 = 0
-	fileCount := 0
 	badgeTemplate, err := template.New("badge").Parse(_badgeTemplate)
 
 	if err != nil {
 		panic(err)
 	}
+
+	for _, report := range reports {
+		coverageSum += report.LineRate
+	}
+
+	averageCoverage := coverageSum / float64(len(reports))
+	aggregateReport := &CoverageReport{LineRate: math.Floor(averageCoverage * 100)}
+
+	err = badgeTemplate.Execute(&buffer, aggregateReport)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return buffer.String()
+}
+
+func ParseFilesToReports(files []string) []CoverageReport {
+	reports := make([]CoverageReport, 0, len(files))
+	i := 0
 
 	for _, fileName := range files {
 		var report CoverageReport
@@ -59,28 +78,19 @@ func RenderBadge(files []string) string {
 			panic(err)
 		}
 
-		coverageSum += report.LineRate
-		fileCount += 1
+		reports = append(reports, report)
+		i += 1
 	}
 
-	if fileCount == 0 {
+	if i == 0 {
 		panic(errors.New("No valid coverage reports provided"))
 	}
 
-	averageCoverage := coverageSum / float64(fileCount)
-	aggregateReport := &CoverageReport{LineRate: math.Floor(averageCoverage * 100)}
-
-	err = badgeTemplate.Execute(&buffer, aggregateReport)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return buffer.String()
+	return reports
 }
 
 func main() {
 	flag.Parse()
 	files := flag.Args()
-	RenderBadge(files)
+	RenderBadge(ParseFilesToReports(files))
 }

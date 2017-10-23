@@ -5,7 +5,7 @@ quality:
 	go tool vet *.go
 
 test:
-	go test
+	go test -cover
 
 build:
 	go build

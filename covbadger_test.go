@@ -4,8 +4,22 @@ import (
 	"testing"
 )
 
+func TestParseFilesToReports(t *testing.T) {
+	files := []string{"test-report.xml"}
+	reports := ParseFilesToReports(files)
+
+	// if len(reports) != len(files) {
+	// 	t.Errorf("Mismatch between parsed reports and input files")
+	// }
+	//
+	if reports == nil {
+		t.Errorf("..")
+	}
+}
+
 func TestRenderBadge(t *testing.T) {
-	badge := RenderBadge([]string{"test-report.xml"})
+	reports := []CoverageReport{CoverageReport{0.9}}
+	badge := RenderBadge(reports)
 	expected := `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="20">
     <title>90%</title>
     <desc>Generated with covbadger (https://github.com/imsky/covbadger)</desc>
