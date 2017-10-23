@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"math"
 	"text/template"
@@ -92,5 +93,6 @@ func ParseFilesToReports(files []string) []CoverageReport {
 func main() {
 	flag.Parse()
 	files := flag.Args()
-	RenderBadge(ParseFilesToReports(files))
+	badge := RenderBadge(ParseFilesToReports(files))
+	fmt.Println(badge)
 }

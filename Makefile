@@ -8,4 +8,5 @@ test:
 	go test -cover
 
 build:
-	go build
+	GOOS=darwin GOARCH=386 go build -o covbadger-darwin
+	GOOS=linux GOARCH=386 go build -o covbadger-linux
