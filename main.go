@@ -1,12 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"encoding/xml"
 	"errors"
 	"flag"
 	"io/ioutil"
 	"math"
-	"os"
 	"text/template"
 )
 
@@ -34,10 +34,8 @@ var _badgeTemplate string = `<svg xmlns="http://www.w3.org/2000/svg" width="96" 
     </g>
 </svg>`
 
-func main() {
-	flag.Parse()
-	files := flag.Args()
-
+func RenderBadge(files []string) string {
+	var buffer bytes.Buffer
 	var coverageSum float64 = 0
 	fileCount := 0
 	badgeTemplate, err := template.New("badge").Parse(_badgeTemplate)
@@ -72,9 +70,17 @@ func main() {
 	averageCoverage := coverageSum / float64(fileCount)
 	aggregateReport := &CoverageReport{LineRate: math.Floor(averageCoverage * 100)}
 
-	err = badgeTemplate.Execute(os.Stdout, aggregateReport)
+	err = badgeTemplate.Execute(&buffer, aggregateReport)
 
 	if err != nil {
 		panic(err)
 	}
+
+	return buffer.String()
+}
+
+func main() {
+	flag.Parse()
+	files := flag.Args()
+	RenderBadge(files)
 }

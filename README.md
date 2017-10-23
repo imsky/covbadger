@@ -3,7 +3,7 @@
 `covbadger` generates code coverage badges from Cobertura-compatible XML 
 coverage reports.
 
-### Compatibility
+## Compatibility
 
 Several "standard" coverage libraries for various languages have Cobertura output built in:
 
@@ -19,6 +19,15 @@ There are also several coverage format conversion tools:
 * JaCoCo has [cover2cover](https://github.com/rix0rrr/cover2cover)
 * Finally, LCOV reports can be converted using [lcov-to-cobertura-xml](https://github.com/eriwen/lcov-to-cobertura-xml)
 
+## Roadmap
+
+* Support for diffing an existing badge to get coverage delta
+* Support for generating a coverage badge with a supplied coverage value (no XML)
+
 ## License
 
 MIT
+
+## Credits
+
+Made by [Ivan Malopinsky](http://imsky.co).

@@ -1,0 +1,33 @@
+# Gitignore from Quickstart
+# qkst.io/dotfiles/gitignore
+
+covbadger
+
+# Executables
+*.out
+*.exe
+*.app
+
+# Logs
+*.log
+logs
+
+# Linux
+*~
+.Trash-*
+
+# OS X
+._*
+.fuse_*
+.Spotlight-*
+.DS_Store
+
+# Windows
+*.tmp
+*.bak
+*.lnk
+Thumbs.db
+
+# Other temporary files
+*.dump
+*.swp
