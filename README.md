@@ -1,7 +1,6 @@
 # covbadger
 
-`covbadger` generates code coverage badges from Cobertura-compatible XML 
-coverage reports.
+`covbadger` generates code coverage badges from Cobertura-compatible XML coverage reports.
 
 ## Compatibility
 

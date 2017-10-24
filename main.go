@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/xml"
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -71,7 +70,6 @@ func RenderBadge(reports []CoverageReport) string {
 
 func ParseFilesToReports(files []string) []CoverageReport {
 	reports := make([]CoverageReport, 0, len(files))
-	i := 0
 
 	for _, fileName := range files {
 		var report CoverageReport
@@ -82,26 +80,27 @@ func ParseFilesToReports(files []string) []CoverageReport {
 			panic(err)
 		}
 
-		err = xml.Unmarshal(in, &report)
-
-		if err != nil {
-			panic(err)
-		}
-
+		_ = xml.Unmarshal(in, &report)
 		reports = append(reports, report)
-		i += 1
-	}
-
-	if i == 0 {
-		panic(errors.New("No valid coverage reports provided"))
 	}
 
 	return reports
 }
 
-func main() {
-	flag.Parse()
-	files := flag.Args()
+func run(files []string) {
+	if len(files) == 0 {
+		flag.Usage()
+		return
+	}
+
 	badge := RenderBadge(ParseFilesToReports(files))
 	fmt.Println(badge)
+}
+
+func main() {
+	flag.Parse()
+	flag.Usage = func() {
+		fmt.Println(`Usage: covbadger [files]`)
+	}
+	run(flag.Args())
 }

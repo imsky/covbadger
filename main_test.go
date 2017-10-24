@@ -5,23 +5,7 @@ import (
 	"testing"
 )
 
-func TestParseFilesToReports(t *testing.T) {
-	files := []string{"test-report.xml"}
-	reports := ParseFilesToReports(files)
-
-	if len(reports) != len(files) {
-		t.Errorf("Mismatch between parsed reports and input files")
-	}
-
-	if reports[0].LineRate != 0.9085 {
-		t.Errorf("Expected line rate: 0.9085, actual line rate: %v", reports[0].LineRate)
-	}
-}
-
-func TestRenderBadge(t *testing.T) {
-	reports := []CoverageReport{CoverageReport{0.9}}
-	badge := RenderBadge(reports)
-	expected := `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="20">
+var expected string = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="20">
     <title>90%</title>
     <desc>Generated with covbadger (https://github.com/imsky/covbadger)</desc>
     <linearGradient id="smooth" x2="0" y2="100%">
@@ -39,6 +23,32 @@ func TestRenderBadge(t *testing.T) {
         <text x="78" y="14">90%</text>
     </g>
 </svg>`
+
+func TestParseFilesToReports(t *testing.T) {
+	files := []string{"test-report.xml"}
+	reports := ParseFilesToReports(files)
+
+	if len(reports) != len(files) {
+		t.Errorf("Mismatch between parsed reports and input files")
+	}
+
+	if reports[0].LineRate != 0.9085 {
+		t.Errorf("Expected line rate: 0.9085, actual line rate: %v", reports[0].LineRate)
+	}
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Bad reports did not cause errors")
+		}
+	}()
+
+	badFiles := []string{"xxx.go"}
+	ParseFilesToReports(badFiles)
+}
+
+func TestRenderBadge(t *testing.T) {
+	reports := []CoverageReport{CoverageReport{0.9}}
+	badge := RenderBadge(reports)
 
 	if badge != expected {
 		t.Errorf("RenderBadge output is incorrect")
@@ -58,4 +68,9 @@ func TestRenderBadge(t *testing.T) {
 		t.Errorf("Incorrect color for coverage badge, expected red")
 		t.Errorf(badge)
 	}
+}
+
+func TestRun(t *testing.T) {
+	run([]string{"test-report.xml"})
+	run([]string{})
 }
