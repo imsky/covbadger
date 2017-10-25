@@ -6,7 +6,7 @@ import (
 )
 
 var expected string = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="20">
-    <title>90%</title>
+    <title>90</title>
     <desc>Generated with covbadger (https://github.com/imsky/covbadger)</desc>
     <linearGradient id="smooth" x2="0" y2="100%">
         <stop offset="0" stop-color="#bbb" stop-opacity=".1" />
@@ -24,16 +24,11 @@ var expected string = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height
     </g>
 </svg>`
 
-func TestParseFilesToReports(t *testing.T) {
-	files := []string{"test-report.xml"}
-	reports := ParseFilesToReports(files)
+func TestGetCoverageFromReports(t *testing.T) {
+	coverage := GetCoverageFromReports([]string{"test-report.xml"})
 
-	if len(reports) != len(files) {
-		t.Errorf("Mismatch between parsed reports and input files")
-	}
-
-	if reports[0].LineRate != 0.9085 {
-		t.Errorf("Expected line rate: 0.9085, actual line rate: %v", reports[0].LineRate)
+	if coverage != 90 {
+		t.Errorf("Coverage is %v, expected 90", coverage)
 	}
 
 	defer func() {
@@ -43,34 +38,57 @@ func TestParseFilesToReports(t *testing.T) {
 	}()
 
 	badFiles := []string{"xxx.go"}
-	ParseFilesToReports(badFiles)
+	GetCoverageFromReports(badFiles)
 }
 
 func TestRenderBadge(t *testing.T) {
-	reports := []CoverageReport{CoverageReport{0.9}}
-	badge := RenderBadge(reports)
+	var err error
+	badge, _ := RenderBadge(90)
 
 	if badge != expected {
 		t.Errorf("RenderBadge output is incorrect")
 	}
 
-	reports = []CoverageReport{CoverageReport{0.7}}
-	badge = RenderBadge(reports)
+	badge, _ = RenderBadge(100)
 
-	if strings.Contains(badge, "#dfb317") != true {
+	if strings.Contains(badge, colors["brightgreen"]) != true {
+		t.Errorf("Incorrect color for coverage badge, expected brightgreen")
+	}
+
+	badge, _ = RenderBadge(70)
+
+	if strings.Contains(badge, colors["yellow"]) != true {
 		t.Errorf("Incorrect color for coverage badge, expected yellow")
 	}
 
-	reports = []CoverageReport{CoverageReport{0.4}}
-	badge = RenderBadge(reports)
+	badge, _ = RenderBadge(60)
 
-	if strings.Contains(badge, "#e05d44") != true {
+	if strings.Contains(badge, colors["orange"]) != true {
+		t.Errorf("Incorrect color for coverage badge, expected orange")
+	}
+
+	badge, _ = RenderBadge(40)
+
+	if strings.Contains(badge, colors["red"]) != true {
 		t.Errorf("Incorrect color for coverage badge, expected red")
 		t.Errorf(badge)
 	}
+
+	badge, err = RenderBadge(101)
+
+	if err == nil {
+		t.Errorf("Invalid coverage: greater than 100%")
+	}
+
+	badge, err = RenderBadge(-1)
+
+	if err == nil {
+		t.Errorf("Invalid coverage: less than 0%")
+	}
 }
 
-func TestRun(t *testing.T) {
-	run([]string{"test-report.xml"})
-	run([]string{})
+func TestCovbadger(t *testing.T) {
+	Run([]string{"test-report.xml"}, 0)
+	Run([]string{}, 99)
+	main()
 }

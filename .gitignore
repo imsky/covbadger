@@ -2,6 +2,7 @@
 # qkst.io/dotfiles/gitignore
 
 covbadger-*
+coverage
 
 # Executables
 *.out

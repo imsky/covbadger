@@ -21,7 +21,6 @@ There are also several coverage format conversion tools:
 ## Roadmap
 
 * Support for diffing an existing badge to get coverage delta
-* Support for generating a coverage badge with a supplied coverage value (no XML)
 
 ## License
 

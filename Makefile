@@ -5,7 +5,8 @@ quality:
 	go tool vet *.go
 
 test:
-	go test -cover
+	go test -coverprofile=coverage
+#	go tool cover -func=coverage | grep total | cut -d$$'\t' -f6 | cut -d'.' -f1
 
 build:
 	GOOS=darwin GOARCH=386 go build -o covbadger-darwin
