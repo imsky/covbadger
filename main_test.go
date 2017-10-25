@@ -77,13 +77,13 @@ func TestRenderBadge(t *testing.T) {
 	badge, err = RenderBadge(101)
 
 	if err == nil {
-		t.Errorf("Invalid coverage: greater than 100%")
+		t.Errorf("Invalid coverage: greater than 100%%")
 	}
 
 	badge, err = RenderBadge(-1)
 
 	if err == nil {
-		t.Errorf("Invalid coverage: less than 0%")
+		t.Errorf("Invalid coverage: less than 0%%")
 	}
 }
 
