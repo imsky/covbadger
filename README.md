@@ -1,5 +1,7 @@
 # covbadger
 
+![Coverage](https://rawgit.com/imsky/covbadger/master/coverage.svg)
+
 `covbadger` generates code coverage badges from Cobertura-compatible XML coverage reports.
 
 ## Compatibility
