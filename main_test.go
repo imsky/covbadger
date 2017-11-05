@@ -24,23 +24,6 @@ var expected string = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height
     </g>
 </svg>`
 
-func TestGetCoverageFromReports(t *testing.T) {
-	coverage := GetCoverageFromReports([]string{"test-report.xml"})
-
-	if coverage != 90 {
-		t.Errorf("Coverage is %v, expected 90", coverage)
-	}
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Bad reports did not cause errors")
-		}
-	}()
-
-	badFiles := []string{"xxx.go"}
-	GetCoverageFromReports(badFiles)
-}
-
 func TestRenderBadge(t *testing.T) {
 	var err error
 	badge, _ := RenderBadge(90)
@@ -88,7 +71,13 @@ func TestRenderBadge(t *testing.T) {
 }
 
 func TestCovbadger(t *testing.T) {
-	Run([]string{"test-report.xml"}, 0)
-	Run([]string{}, 99)
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Invalid coverage value did not throw an error")
+		}
+	}()
+
 	main()
+	Run([]string{"99"})
+	Run([]string{"-99"})
 }

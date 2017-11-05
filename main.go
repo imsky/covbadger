@@ -2,19 +2,12 @@ package main
 
 import (
 	"bytes"
-	"encoding/xml"
 	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
-	"math"
+	"strconv"
 	"text/template"
 )
-
-//CoverageReport represents an individual coverage report
-type CoverageReport struct {
-	LineRate float64 `xml:"line-rate,attr"`
-}
 
 //Badge represents a coverage badge
 type Badge struct {
@@ -51,7 +44,7 @@ var _badgeTemplate string = `<svg xmlns="http://www.w3.org/2000/svg" width="96" 
 
 func RenderBadge(coverage int) (string, error) {
 	if coverage < 0 || coverage > 100 {
-		return "", errors.New("Invalid coverage: " + string(coverage))
+		return "", errors.New("Invalid coverage: " + strconv.Itoa(coverage))
 	}
 
 	var buffer bytes.Buffer
@@ -73,51 +66,27 @@ func RenderBadge(coverage int) (string, error) {
 	return buffer.String(), nil
 }
 
-func GetCoverageFromReports(files []string) int {
-	var sum float64 = 0
-	reports := make([]CoverageReport, 0, len(files))
-
-	for _, fileName := range files {
-		var report CoverageReport
-
-		in, err := ioutil.ReadFile(fileName)
-
-		if err != nil {
-			panic(err)
-		}
-
-		xml.Unmarshal(in, &report)
-		sum += report.LineRate
-		reports = append(reports, report)
-	}
-
-	return int(math.Floor(sum / float64(len(reports)) * 100))
-}
-
-func Run(files []string, coverage int) {
-	var badge string
-
-	if len(files) == 0 && coverage == 0 {
+func Run(args []string) {
+	if len(args) != 1 {
 		flag.Usage()
 		return
-	} else if len(files) > 0 {
-		badge, _ = RenderBadge(GetCoverageFromReports(files))
-	} else if coverage > 0 {
-		badge, _ = RenderBadge(coverage)
 	}
 
-	fmt.Println(badge)
+	coverage, _ := strconv.Atoi(args[0])
+	badge, err := RenderBadge(coverage)
+
+	if err != nil {
+		panic(err)
+	} else {
+		fmt.Println(badge)
+	}
 }
 
 func main() {
-	var coverageFlag int
-
-	flag.IntVar(&coverageFlag, "coverage", 0, "custom coverage value")
-	flag.Parse()
 	flag.Usage = func() {
-		fmt.Println(`Usage: covbadger [files]`)
-		flag.PrintDefaults()
+		fmt.Println(`Usage: covbadger [coverage]`)
 	}
 
-	Run(flag.Args(), coverageFlag)
+	flag.Parse()
+	Run(flag.Args())
 }

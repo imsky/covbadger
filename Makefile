@@ -6,7 +6,7 @@ quality:
 
 test:
 	go test -coverprofile=coverage
-	go run main.go -coverage $$(go tool cover -func=coverage | grep total | cut -d$$'\t' -f6 | cut -d'.' -f1) > coverage.svg
+	go run main.go $$(go tool cover -func=coverage | grep total | cut -d$$'\t' -f5 | cut -d'.' -f1) > coverage.svg
 
 build:
 	GOOS=darwin GOARCH=386 go build -o covbadger-darwin
