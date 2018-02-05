@@ -9,6 +9,9 @@
 ```
 # generate a badge that shows 97% coverage
 covbadger 97
+
+# pipe to covbadger
+echo 97 | covbadger -
 ```
 
 ## License
