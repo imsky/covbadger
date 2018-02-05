@@ -1,6 +1,8 @@
 package main
 
 import (
+	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 )
@@ -79,5 +81,18 @@ func TestCovbadger(t *testing.T) {
 
 	main()
 	Run([]string{"99"})
+
+	userInput := []byte("90.09")
+	tmpfile, _ := ioutil.TempFile("", "covbadger-stdin")
+	defer os.Remove(tmpfile.Name())
+	tmpfile.Write(userInput)
+	tmpfile.Seek(0, 0)
+
+	_stdin := os.Stdin
+	defer func() { os.Stdin = _stdin }()
+	os.Stdin = tmpfile
+	Run([]string{"-"})
+	tmpfile.Close()
+
 	Run([]string{"-99"})
 }

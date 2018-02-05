@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"errors"
 	"flag"
 	"fmt"
+	"os"
 	"strconv"
 	"text/template"
 )
@@ -72,8 +74,16 @@ func Run(args []string) {
 		return
 	}
 
-	coverage, _ := strconv.ParseFloat(args[0], 64)
-	badge, err := RenderBadge(int(coverage))
+	coverage := args[0]
+
+	if coverage == "-" {
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		coverage = scanner.Text()
+	}
+
+	coverageValue, _ := strconv.ParseFloat(coverage, 64)
+	badge, err := RenderBadge(int(coverageValue))
 
 	if err != nil {
 		panic(err)
