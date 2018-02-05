@@ -72,8 +72,8 @@ func Run(args []string) {
 		return
 	}
 
-	coverage, _ := strconv.Atoi(args[0])
-	badge, err := RenderBadge(coverage)
+	coverage, _ := strconv.ParseFloat(args[0], 64)
+	badge, err := RenderBadge(int(coverage))
 
 	if err != nil {
 		panic(err)
